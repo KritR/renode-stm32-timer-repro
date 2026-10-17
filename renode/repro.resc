@@ -1,0 +1,17 @@
+# embassy-stm32's 16-bit time driver on an STM32G474's TIM15 at 32768 Hz,
+# on Renode's own STM32_Timer: PA5 toggles every 100 ms while another task
+# polls every 10 us. Expected: 31 toggles in 3 s. Run from any directory:
+#
+#   renode --console --disable-gui renode/repro.resc
+#
+# with tickrepro.elf built into ../target (see the README).
+
+path add $ORIGIN
+mach create
+machine LoadPlatformDescription @g474-tim15.repl
+sysbus LoadELF $ORIGIN/../target/thumbv7em-none-eabi/release/tickrepro
+include @count.py
+count_toggles
+emulation RunFor "3"
+toggles
+quit
